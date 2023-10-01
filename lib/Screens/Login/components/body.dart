@@ -54,7 +54,7 @@ class Body extends StatelessWidget {
                     context,
                     PageTransition(
                         type: PageTransitionType.fade,
-                        child: PetPalHomePage(
+                        child: PetPalHomePage.noAppProvided(
                           title: mainTitle,
                         )))
               },
