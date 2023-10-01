@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:petpal_flutter/Screens/Profile/profile_screen.dart';
 import 'package:petpal_flutter/Screens/Welcome/welcome_screen.dart';
 import 'package:petpal_flutter/constants.dart';
 
@@ -113,16 +116,21 @@ class MyApp extends StatelessWidget {
 }
 
 class PetPalHomePage extends StatefulWidget {
-  const PetPalHomePage({Key? key, required this.title}) : super(key: key);
+  PetPalHomePage({Key? key, required this.title, required this.firebaseApp}) : super(key: key);
+  PetPalHomePage.noAppProvided({Key? key, required this.title}) : super(key: key);
   final String title;
+  late FirebaseApp firebaseApp;
 
   @override
-  _PetPalPageState createState() => _PetPalPageState();
+  _PetPalPageState createState() => _PetPalPageState(FirebaseAuth.instanceFor(app: firebaseApp).currentUser, firebaseApp);
 }
 
 class _PetPalPageState extends State<PetPalHomePage> {
+  _PetPalPageState(this.user, this.firebaseApp);
   Client client = http.Client();
   List<PetAdvert> petAds = [];
+  User? user;
+  FirebaseApp firebaseApp;
 
   int _counter = 0;
   int _selectedIndex = 0;
@@ -227,12 +235,14 @@ class _PetPalPageState extends State<PetPalHomePage> {
       _pageMessage = _widgetOptions.elementAt(index);
     });
 
-    // Navigator.pushReplacement(
-    //     context,
-    //     PageTransition(
-    //       type: PageTransitionType.fade,
-    //       child: AdvertScreen(),
-    //     ));
+    // if (index == 1) {
+    //   Navigator.pushReplacement(
+    //       context,
+    //       PageTransition(
+    //         type: PageTransitionType.fade,
+    //         child: AdvertScreen(),
+    //       ));
+    // }
   }
 
   void _addNewAdvert() {
@@ -328,6 +338,18 @@ class _PetPalPageState extends State<PetPalHomePage> {
     ];*/
   }
 
+  Widget _getProfile(User? user, FirebaseApp firebaseApp) {
+    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var iconColor = isDark ? kPrimaryColor : kPrimaryLightColor;
+
+    return ProfileScreen(user: user, firebaseApp: firebaseApp);
+  }
+
+  Widget getProfile(User? user, FirebaseApp fireBaseApp) {
+    Size size = MediaQuery.of(context).size;
+    return _getProfile(user, fireBaseApp);
+  }
+
   Widget bodyFunction() {
     switch (_page) {
       case 0:
@@ -377,17 +399,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
         return Center(
             child: Container(
           color: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
-          child: Text(
-            _counter.toString(),
-            style: TextStyle(
-              fontSize: 22,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          alignment: Alignment.center,
+              child: getProfile(user, firebaseApp),
         ));
     }
   }
@@ -402,11 +414,6 @@ class _PetPalPageState extends State<PetPalHomePage> {
         centerTitle: true,
       ),
       body: bodyFunction(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Press to increase the counter',
-        child: Icon(Icons.add),
-      ),
       bottomNavigationBar: CurvedNavigationBar(
           items: <Widget>[
             Icon(Icons.home, size: 30),

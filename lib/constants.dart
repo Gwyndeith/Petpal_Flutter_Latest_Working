@@ -34,3 +34,4 @@ const dontHaveAccountText = "Don't have an account? ";
 const alreadyHaveAccountText = "Already have an account? ";
 const signUpRouteText = "Sign Up!";
 const signInRouteText = "Sign In!";
+const tProfile = "Profile";
