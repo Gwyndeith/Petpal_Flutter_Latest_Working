@@ -33,13 +33,6 @@ class _PetAdvertPageState extends State<AdvertDetails> {
       _selectedIndex = index;
       _page = index;
     });
-
-    // Navigator.pushReplacement(
-    //     context,
-    //     PageTransition(
-    //       type: PageTransitionType.fade,
-    //       child: AdvertScreen(),
-    //     ));
   }
 
   @override

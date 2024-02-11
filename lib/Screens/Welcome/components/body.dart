@@ -1,15 +1,9 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:petpal_flutter/Screens/Login/login_screen.dart';
 import 'package:petpal_flutter/Screens/Signup/signup_screen.dart';
 import 'package:petpal_flutter/constants.dart';
-import 'package:petpal_flutter/main.dart';
 
 import '../../../components/google_sign_in_button.dart';
 import '../../../components/rounded_button.dart';
