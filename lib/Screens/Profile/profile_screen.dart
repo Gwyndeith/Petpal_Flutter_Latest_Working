@@ -3,26 +3,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:petpal_flutter/Screens/Login/login_screen.dart';
 import 'package:petpal_flutter/Screens/Profile/update_profile_screen.dart';
+import 'package:petpal_flutter/Screens/Welcome/welcome_screen.dart';
 import 'package:petpal_flutter/constants.dart';
 
 import 'components/user_profile_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key, required this.user, required this.firebaseApp}) : super(key: key);
-  final FirebaseApp firebaseApp;
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
   final User? user;
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(FirebaseAuth.instanceFor(app: firebaseApp).currentUser, firebaseApp);
+  _ProfileScreenState createState() => _ProfileScreenState(
+      FirebaseAuth.instanceFor(app: Firebase.app("PetPal")).currentUser);
 }
 
 class _ProfileScreenState extends State<ProfileScreen>{
-  _ProfileScreenState(this.user, this.firebaseApp);
+  _ProfileScreenState(this.user);
 
   User? user;
-  FirebaseApp firebaseApp;
+  FirebaseApp firebaseApp = Firebase.app("PetPal");
 
   @override
   Widget build(BuildContext context) {
@@ -78,27 +82,51 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   endIcon: false,
                   onPress: () {
                     Get.defaultDialog(
-                      title: "LOGOUT",
+                      title: "Log Out",
                       titleStyle: const TextStyle(fontSize: 20),
                       content: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
-                        child: Text("Are you sure, you want to Logout?"),
+                        child: Text(
+                            "Are you sure you want to log out of your account?",
+                            textAlign: TextAlign.center),
                       ),
                       confirm: Expanded(
                         child: ElevatedButton(
-                          onPressed: () => Fluttertoast.showToast(msg: 'Logout button pressed!'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, side: BorderSide.none),
+                          onPressed: () => signOutFromAccount(
+                              context: context,
+                              firebaseApp: Firebase.app("PetPal")),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              side: BorderSide.none),
                           child: const Text("Yes"),
                         ),
                       ),
-                      cancel: OutlinedButton(onPressed: () => Get.back(), child: const Text("No")),
+                      cancel: OutlinedButton(
+                          onPressed: () => Get.back(), child: const Text("No")),
                     );
                   }),
-              const Padding(padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0)),
+              const Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0)),
             ],
           ),
         ),
       ),
     );
+  }
+
+  static Future<User?> signOutFromAccount(
+      {required BuildContext context, required FirebaseApp firebaseApp}) async {
+    FirebaseAuth auth = FirebaseAuth.instanceFor(app: firebaseApp);
+    User? user;
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    auth.signOut();
+    googleSignIn.signOut();
+
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+    //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute( builder: (ctx) => const WelcomeScreen()), (route) => false);
   }
 }

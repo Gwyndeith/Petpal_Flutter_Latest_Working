@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:petpal_flutter/Screens/Adverts/advert_screen.dart';
 import 'package:petpal_flutter/Screens/Profile/profile_screen.dart';
 import 'package:petpal_flutter/Screens/Welcome/welcome_screen.dart';
 import 'package:petpal_flutter/constants.dart';
@@ -125,6 +126,13 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ))),
       home: const WelcomeScreen(),
+      routes: {
+        '/welcome': (context) => const WelcomeScreen(),
+        '/adverts': (context) => const AdvertScreen(),
+        '/profile': (context) => ProfileScreen(
+            user: FirebaseAuth.instanceFor(app: Firebase.app("PetPal"))
+                .currentUser)
+      },
     );
   }
 }
@@ -273,7 +281,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
     //var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     //var iconColor = isDark ? kPrimaryColor : kPrimaryLightColor;
 
-    return ProfileScreen(user: user, firebaseApp: firebaseApp);
+    return ProfileScreen(user: user);
   }
 
   Widget getProfile(User? user, FirebaseApp fireBaseApp) {
