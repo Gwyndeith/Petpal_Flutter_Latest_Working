@@ -70,42 +70,6 @@ class Body extends StatelessWidget {
               },
             ),
             GoogleSignInButton(),
-            /*InkWell(
-              child: Container(
-                  width: size.width / 2,
-                  height: 50,
-                  margin: const EdgeInsets.only(top: 2, bottom: 2),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.black),
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                        height: 27.0,
-                        width: 30.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image:
-                                  AssetImage('assets/icons/google_sign_in.svg'),
-                              fit: BoxFit.cover),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ],
-                  ))),
-              onTap: () async {
-
-              },
-            ),*/
           ],
         ),
       ),
