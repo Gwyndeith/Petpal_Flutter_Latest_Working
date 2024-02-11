@@ -25,7 +25,7 @@ class Body extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               loginText,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -66,7 +66,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen();
+                      return const SignUpScreen();
                     },
                   ),
                 );

@@ -11,7 +11,7 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size; //Width and height of the screen.
-    return Container(
+    return SizedBox(
       height: size.height,
       width: double.infinity,
       child: Stack(
@@ -28,11 +28,11 @@ class Background extends StatelessWidget {
           Positioned(
             bottom: 0,
             left: 0,
+            width: size.width * 0.2,
             child: Image.asset(
               mainBottomPNG,
               width: size.width * 0.3,
             ),
-            width: size.width * 0.2,
           ),
           child,
         ],

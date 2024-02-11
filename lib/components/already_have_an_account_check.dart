@@ -18,7 +18,7 @@ class AlreadyHaveAnAccountCheck extends StatelessWidget {
       children: <Widget>[
         Text(
           login ? dontHaveAccountText : alreadyHaveAccountText,
-          style: TextStyle(
+          style: const TextStyle(
             color: kPrimaryColor,
           ),
         ),
@@ -26,7 +26,7 @@ class AlreadyHaveAnAccountCheck extends StatelessWidget {
           onTap: onPressed,
           child: Text(
             login ? signUpRouteText : signInRouteText,
-            style: TextStyle(
+            style: const TextStyle(
               color: kPrimaryColor,
               fontWeight: FontWeight.bold,
             ),

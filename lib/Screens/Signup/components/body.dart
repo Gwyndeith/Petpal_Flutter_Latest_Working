@@ -29,7 +29,7 @@ class Body extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               signupText,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -58,12 +58,12 @@ class Body extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return LoginScreen();
+                    return const LoginScreen();
                   }),
                 );
               },
             ),
-            OrDivider(),
+            const OrDivider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

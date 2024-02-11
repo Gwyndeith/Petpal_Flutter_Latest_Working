@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:page_transition/page_transition.dart';
@@ -14,14 +14,13 @@ import 'package:petpal_flutter/Screens/Profile/profile_screen.dart';
 import 'package:petpal_flutter/Screens/Welcome/welcome_screen.dart';
 import 'package:petpal_flutter/constants.dart';
 
-import 'Screens/Adverts/advert_screen.dart';
 import 'Screens/Adverts/components/advert_container.dart';
 import 'Screens/Adverts/components/advert_detail.dart';
 import 'Screens/Adverts/pet_advert.dart';
 import 'Screens/Create/create_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 MaterialColor createMaterialColor(Color kPrimaryColor) {
@@ -34,7 +33,7 @@ MaterialColor createMaterialColor(Color kPrimaryColor) {
   for (int i = 1; i < 10; i++) {
     strengths.add(0.1 * i);
   }
-  strengths.forEach((strength) {
+  for (var strength in strengths) {
     final double ds = 0.5 - strength;
     swatch[(strength * 1000).round()] = Color.fromRGBO(
       r + ((ds < 0 ? r : (255 - r)) * ds).round(),
@@ -42,7 +41,7 @@ MaterialColor createMaterialColor(Color kPrimaryColor) {
       b + ((ds < 0 ? b : (255 - b)) * ds).round(),
       1,
     );
-  });
+  }
   return MaterialColor(kPrimaryColor.value, swatch);
 }
 
@@ -98,39 +97,63 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _checkLocationPermission(0);
+    _checkNotificationsPermission(0);
+    _checkStoragePermission(0);
 
-    return MaterialApp(
+    Future<FirebaseApp> initializeFirebase(BuildContext context) async {
+      FirebaseApp firebaseApp = await Firebase.initializeApp(
+          name: "PetPal",
+          options: const FirebaseOptions(
+              apiKey: "AIzaSyCrA7BZaQKsYwnGgWhxI-v07LwTNqIlx4I",
+              appId: "1:92685570900:android:f69e4ea9de2493d32daec1",
+              messagingSenderId: "92685570900",
+              projectId: "petpal-8775a"));
+      return firebaseApp;
+    }
+    initializeFirebase(context);
+
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: mainTitle,
       theme: ThemeData(
           primarySwatch: createMaterialColor(kPrimaryColor),
-          scaffoldBackgroundColor: Colors.grey,
+          scaffoldBackgroundColor: Colors.white,
           textTheme: const TextTheme(
-              headline1: TextStyle(
+              displayLarge: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ))),
-      home: WelcomeScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }
 
 class PetPalHomePage extends StatefulWidget {
-  PetPalHomePage({Key? key, required this.title, required this.firebaseApp}) : super(key: key);
+  PetPalHomePage({Key? key, required this.title}) : super(key: key);
   PetPalHomePage.noAppProvided({Key? key, required this.title}) : super(key: key);
   final String title;
-  late FirebaseApp firebaseApp;
 
   @override
-  _PetPalPageState createState() => _PetPalPageState(FirebaseAuth.instanceFor(app: firebaseApp).currentUser, firebaseApp);
+  _PetPalPageState createState() => _PetPalPageState();
 }
 
 class _PetPalPageState extends State<PetPalHomePage> {
-  _PetPalPageState(this.user, this.firebaseApp);
+  _PetPalPageState();
   Client client = http.Client();
   List<PetAdvert> petAds = [];
-  User? user;
-  FirebaseApp firebaseApp;
+
+  Future<FirebaseApp> initializeFirebase(BuildContext context) async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp(
+        name: "PetPal",
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyCrA7BZaQKsYwnGgWhxI-v07LwTNqIlx4I",
+            appId: "1:92685570900:android:f69e4ea9de2493d32daec1",
+            messagingSenderId: "92685570900",
+            projectId: "petpal-8775a")).whenComplete(() => setState(() {})
+    );
+    return firebaseApp;
+  }
+  User? user = FirebaseAuth.instanceFor(app: Firebase.app("PetPal")).currentUser;
 
   int _counter = 0;
   int _selectedIndex = 0;
@@ -139,6 +162,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
 
   @override
   void initState() {
+
     _getPetAds();
     super.initState();
   }
@@ -150,9 +174,9 @@ class _PetPalPageState extends State<PetPalHomePage> {
             'https://gwyndeith.pythonanywhere.com/petpal/petads/')))
         .body);
 
-    response.forEach((element) {
+    for (var element in response) {
       petAds.add(PetAdvert.fromMap(element));
-    });
+    }
     Fluttertoast.showToast(
         msg: 'There are currently ${petAds.length} adverts!',
         toastLength: Toast.LENGTH_SHORT,
@@ -250,7 +274,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
         context,
         PageTransition(
           type: PageTransitionType.fade,
-          child: CreateScreen(),
+          child: const CreateScreen(),
         ));
   }
 
@@ -339,14 +363,13 @@ class _PetPalPageState extends State<PetPalHomePage> {
   }
 
   Widget _getProfile(User? user, FirebaseApp firebaseApp) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    var iconColor = isDark ? kPrimaryColor : kPrimaryLightColor;
+    //var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    //var iconColor = isDark ? kPrimaryColor : kPrimaryLightColor;
 
     return ProfileScreen(user: user, firebaseApp: firebaseApp);
   }
 
   Widget getProfile(User? user, FirebaseApp fireBaseApp) {
-    Size size = MediaQuery.of(context).size;
     return _getProfile(user, fireBaseApp);
   }
 
@@ -356,20 +379,20 @@ class _PetPalPageState extends State<PetPalHomePage> {
         return Center(
             child: Container(
           color: Colors.brown,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          alignment: Alignment.center,
           child: Text(
             _counter.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 22,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          alignment: Alignment.center,
         ));
       case 1:
-        Size size = MediaQuery.of(context).size;
+        //Size size = MediaQuery.of(context).size;
         return Center(
           child: SingleChildScrollView(
               child:
@@ -383,23 +406,23 @@ class _PetPalPageState extends State<PetPalHomePage> {
         return Center(
             child: Container(
           color: Colors.green,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          alignment: Alignment.center,
           child: Text(
             _counter.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 22,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          alignment: Alignment.center,
         ));
       default:
         return Center(
             child: Container(
           color: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
-              child: getProfile(user, firebaseApp),
+              child: getProfile(user, Firebase.app("PetPal")),
         ));
     }
   }
@@ -412,10 +435,11 @@ class _PetPalPageState extends State<PetPalHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(_pageMessage),
         centerTitle: true,
+        backgroundColor: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
       ),
       body: bodyFunction(),
       bottomNavigationBar: CurvedNavigationBar(
-          items: <Widget>[
+          items: const <Widget>[
             Icon(Icons.home, size: 30),
             Icon(Icons.assignment, size: 30),
             Icon(Icons.message, size: 30),
@@ -425,7 +449,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
           buttonBackgroundColor: Colors.white,
           backgroundColor: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
           animationCurve: Curves.fastLinearToSlowEaseIn,
-          animationDuration: Duration(milliseconds: 1500),
+          animationDuration: const Duration(milliseconds: 1500),
           onTap: _onItemTapped,
           index:
               _selectedIndex), // This trailing comma makes auto-formatting nicer for build methods.

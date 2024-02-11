@@ -8,11 +8,21 @@ import 'package:petpal_flutter/constants.dart';
 
 import 'components/user_profile_widget.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user, required this.firebaseApp}) : super(key: key);
   final FirebaseApp firebaseApp;
 
   final User? user;
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState(FirebaseAuth.instanceFor(app: firebaseApp).currentUser, firebaseApp);
+}
+
+class _ProfileScreenState extends State<ProfileScreen>{
+  _ProfileScreenState(this.user, this.firebaseApp);
+
+  User? user;
+  FirebaseApp firebaseApp;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
                     width: 120,
                     height: 120,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100), child: const Image(image: AssetImage("assets/images/pet_lineup.jpg"))),
+                        borderRadius: BorderRadius.circular(45), child: Image.network(user!.photoURL as String)),
                   ),
                 ],
               ),
@@ -45,10 +55,10 @@ class ProfileScreen extends StatelessWidget {
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
-                  onPressed: () => Get.to(() => UpdateProfileScreen(firebaseApp: firebaseApp,)),
+                  onPressed: () => Get.to(() => UpdateProfileScreen(firebaseApp: firebaseApp)),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: kPrimaryColor, side: BorderSide.none, shape: const StadiumBorder()),
-                  child: const Text('Edit Profile', style: TextStyle(color: kDefaultIconDarkColor)),
+                  child: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -84,6 +94,7 @@ class ProfileScreen extends StatelessWidget {
                       cancel: OutlinedButton(onPressed: () => Get.back(), child: const Text("No")),
                     );
                   }),
+              const Padding(padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0)),
             ],
           ),
         ),

@@ -1,11 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:petpal_flutter/components/rounded_button.dart';
-import 'package:petpal_flutter/constants.dart';
-import 'package:petpal_flutter/main.dart';
 
-import 'background.dart';
 
 class AdvertDetails extends StatefulWidget {
   final Size size;
@@ -13,7 +8,7 @@ class AdvertDetails extends StatefulWidget {
   final String adTitle;
   final String adBody;
 
-  AdvertDetails(
+  const AdvertDetails(
       {super.key,
       required this.size,
       required this.imagePath,
@@ -52,7 +47,7 @@ class _PetAdvertPageState extends State<AdvertDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.adTitle),
-        titleTextStyle: TextStyle(color: Colors.black),
+        titleTextStyle: const TextStyle(color: Colors.black),
         backgroundColor: _page == 0
             ? Colors.brown
             : _page == 1

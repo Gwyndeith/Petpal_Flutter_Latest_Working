@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +17,8 @@ import '../../../custom_colors.dart';
 import 'background.dart';
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -47,7 +48,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen();
+                      return const LoginScreen();
                     },
                   ),
                 );
@@ -62,13 +63,14 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen();
+                      return const SignUpScreen();
                     },
                   ),
                 );
               },
             ),
-            InkWell(
+            GoogleSignInButton(),
+            /*InkWell(
               child: Container(
                   width: size.width / 2,
                   height: 50,
@@ -101,99 +103,12 @@ class Body extends StatelessWidget {
                     ],
                   ))),
               onTap: () async {
-                FutureBuilder(
-                  future: initializeFirebase(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text('Error initializing Firebase');
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      return GoogleSignInButton();
-                    }
-                    return const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        CustomColors.firebaseOrange,
-                      ),
-                    );
-                  },
-                );
+
               },
-            ),
+            ),*/
           ],
         ),
       ),
     );
-  }
-
-  static Future<FirebaseApp> initializeFirebase(BuildContext context) async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp(
-        name: "PetPal",
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyCrA7BZaQKsYwnGgWhxI-v07LwTNqIlx4I",
-            appId: "1:92685570900:android:f69e4ea9de2493d32daec1",
-            messagingSenderId: "92685570900",
-            projectId: "petpal-8775a"));
-
-    User? user = await signInWithGoogle(context: context, firebaseApp: firebaseApp) as User?;
-
-    if (user != null) {
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-              type: PageTransitionType.fade,
-              child: PetPalHomePage(
-                title: mainTitle,
-                firebaseApp: firebaseApp
-              )));
-
-    } else {
-      Fluttertoast.showToast(
-        msg: "Google Sign In failed.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1);
-    }
-
-    // TODO: Add auto login logic
-
-    return firebaseApp;
-  }
-
-  static Future<User?> signInWithGoogle(
-      {required BuildContext context, required FirebaseApp firebaseApp}) async {
-    FirebaseAuth auth = FirebaseAuth.instanceFor(app: firebaseApp);
-    User? user;
-
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-
-      try {
-        final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
-
-        user = userCredential.user;
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          // handle the error here
-        } else if (e.code == 'invalid-credential') {
-          // handle the error here
-        }
-      } catch (e) {
-        // handle the error here
-      }
-    }
-
-    return user;
   }
 }
