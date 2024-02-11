@@ -110,6 +110,7 @@ class MyApp extends StatelessWidget {
               projectId: "petpal-8775a"));
       return firebaseApp;
     }
+
     initializeFirebase(context);
 
     return GetMaterialApp(
@@ -130,7 +131,9 @@ class MyApp extends StatelessWidget {
 
 class PetPalHomePage extends StatefulWidget {
   PetPalHomePage({Key? key, required this.title}) : super(key: key);
-  PetPalHomePage.noAppProvided({Key? key, required this.title}) : super(key: key);
+
+  PetPalHomePage.noAppProvided({Key? key, required this.title})
+      : super(key: key);
   final String title;
 
   @override
@@ -139,21 +142,24 @@ class PetPalHomePage extends StatefulWidget {
 
 class _PetPalPageState extends State<PetPalHomePage> {
   _PetPalPageState();
+
   Client client = http.Client();
   List<PetAdvert> petAds = [];
 
   Future<FirebaseApp> initializeFirebase(BuildContext context) async {
     FirebaseApp firebaseApp = await Firebase.initializeApp(
-        name: "PetPal",
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyCrA7BZaQKsYwnGgWhxI-v07LwTNqIlx4I",
-            appId: "1:92685570900:android:f69e4ea9de2493d32daec1",
-            messagingSenderId: "92685570900",
-            projectId: "petpal-8775a")).whenComplete(() => setState(() {})
-    );
+            name: "PetPal",
+            options: const FirebaseOptions(
+                apiKey: "AIzaSyCrA7BZaQKsYwnGgWhxI-v07LwTNqIlx4I",
+                appId: "1:92685570900:android:f69e4ea9de2493d32daec1",
+                messagingSenderId: "92685570900",
+                projectId: "petpal-8775a"))
+        .whenComplete(() => setState(() {}));
     return firebaseApp;
   }
-  User? user = FirebaseAuth.instanceFor(app: Firebase.app("PetPal")).currentUser;
+
+  User? user =
+      FirebaseAuth.instanceFor(app: Firebase.app("PetPal")).currentUser;
 
   int _counter = 0;
   int _selectedIndex = 0;
@@ -162,7 +168,6 @@ class _PetPalPageState extends State<PetPalHomePage> {
 
   @override
   void initState() {
-
     _getPetAds();
     super.initState();
   }
@@ -170,8 +175,8 @@ class _PetPalPageState extends State<PetPalHomePage> {
   _getPetAds() async {
     petAds = [];
 
-    List response = json.decode((await client.get(Uri.parse(
-            'https://gwyndeith.pythonanywhere.com/petpal/petads/')))
+    List response = json.decode((await client.get(
+            Uri.parse('https://gwyndeith.pythonanywhere.com/petpal/petads/')))
         .body);
 
     for (var element in response) {
@@ -195,41 +200,31 @@ class _PetPalPageState extends State<PetPalHomePage> {
         itemBuilder: (context, index) => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-          InkWell(
-              child: AdvertContainer(
-                size: MediaQuery.of(context).size,
-                adTitle: petAds.elementAt(index).title,
-                assetPath: petAds.elementAt(index).imagePath,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
               ),
-              onTap: () {
-                /*
-                Fluttertoast.showToast(
-                    msg:
-                        'Tapped on advert with index: ${petAds.elementAt(index).id}!',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1);
-                  */
-
-                Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.fade,
-                      child: AdvertDetails(
-                          size: MediaQuery.of(context).size,
-                          adTitle: petAds.elementAt(index).title,
-                          adBody: petAds.elementAt(index).body,
-                          imagePath: petAds.elementAt(index).imagePath
-                      ),
-                    ));
-              }),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-        ]),
+              InkWell(
+                  child: AdvertContainer(
+                    size: MediaQuery.of(context).size,
+                    adTitle: petAds.elementAt(index).title,
+                    assetPath: petAds.elementAt(index).imagePath,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.fade,
+                          child: AdvertDetails(
+                              size: MediaQuery.of(context).size,
+                              adTitle: petAds.elementAt(index).title,
+                              adBody: petAds.elementAt(index).body,
+                              imagePath: petAds.elementAt(index).imagePath),
+                        ));
+                  }),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+            ]),
       )
     ]);
   }
@@ -258,15 +253,6 @@ class _PetPalPageState extends State<PetPalHomePage> {
       _page = index;
       _pageMessage = _widgetOptions.elementAt(index);
     });
-
-    // if (index == 1) {
-    //   Navigator.pushReplacement(
-    //       context,
-    //       PageTransition(
-    //         type: PageTransitionType.fade,
-    //         child: AdvertScreen(),
-    //       ));
-    // }
   }
 
   void _addNewAdvert() {
@@ -280,86 +266,7 @@ class _PetPalPageState extends State<PetPalHomePage> {
 
   Widget getAdverts() {
     Size size = MediaQuery.of(context).size;
-    return _getAdvertList(); /*<Widget>[
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-      InkWell(
-        child: AdvertContainer(
-          size: size,
-          adTitle: 'Puppy in need of home!',
-          assetPath: 'assets/images/puppy_ad1.jpg',
-        ),
-        onTap: () {
-          Fluttertoast.showToast(
-              msg: "Tapped on container!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1);
-        },
-      ),
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-      InkWell(
-        child: AdvertContainer(
-          size: size,
-          adTitle: 'Puppy in need of home!',
-          assetPath: 'assets/images/puppy_ad2.jpg',
-        ),
-        onTap: () {
-          Fluttertoast.showToast(
-              msg: "Tapped on container!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1);
-        },
-      ),
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-      InkWell(
-        child: AdvertContainer(
-          size: size,
-          adTitle: 'Puppy in need of home!',
-          assetPath: 'assets/images/puppy_ad2.jpg',
-        ),
-        onTap: () {
-          Fluttertoast.showToast(
-              msg: "Tapped on container!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1);
-        },
-      ),
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-      InkWell(
-        child: AdvertContainer(
-          size: size,
-          adTitle: 'Puppy in need of home!',
-          assetPath: 'assets/images/puppy_ad1.jpg',
-        ),
-        onTap: () {
-          Fluttertoast.showToast(
-              msg: "Tapped on container!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1);
-        },
-      ),
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-      RoundedButton(
-        onPressed: _addNewAdvert,
-        text: createAdvertButtonText,
-      ),
-      SizedBox(
-        height: size.height * 0.02,
-      ),
-    ];*/
+    return _getAdvertList();
   }
 
   Widget _getProfile(User? user, FirebaseApp firebaseApp) {
@@ -421,8 +328,14 @@ class _PetPalPageState extends State<PetPalHomePage> {
       default:
         return Center(
             child: Container(
-          color: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
-              child: getProfile(user, Firebase.app("PetPal")),
+          color: _selectedIndex == 0
+              ? Colors.brown
+              : _selectedIndex == 1
+                  ? Colors.lightBlue
+                  : _selectedIndex == 2
+                      ? Colors.green
+                      : Colors.purple,
+          child: getProfile(user, Firebase.app("PetPal")),
         ));
     }
   }
@@ -435,7 +348,13 @@ class _PetPalPageState extends State<PetPalHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(_pageMessage),
         centerTitle: true,
-        backgroundColor: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
+        backgroundColor: _selectedIndex == 0
+            ? Colors.brown
+            : _selectedIndex == 1
+                ? Colors.lightBlue
+                : _selectedIndex == 2
+                    ? Colors.green
+                    : Colors.purple,
       ),
       body: bodyFunction(),
       bottomNavigationBar: CurvedNavigationBar(
@@ -447,7 +366,13 @@ class _PetPalPageState extends State<PetPalHomePage> {
           ],
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
-          backgroundColor: _selectedIndex == 0 ? Colors.brown : _selectedIndex == 1 ? Colors.lightBlue : _selectedIndex == 2 ? Colors.green : Colors.purple,
+          backgroundColor: _selectedIndex == 0
+              ? Colors.brown
+              : _selectedIndex == 1
+                  ? Colors.lightBlue
+                  : _selectedIndex == 2
+                      ? Colors.green
+                      : Colors.purple,
           animationCurve: Curves.fastLinearToSlowEaseIn,
           animationDuration: const Duration(milliseconds: 1500),
           onTap: _onItemTapped,
